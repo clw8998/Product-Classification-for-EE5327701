@@ -1,5 +1,9 @@
 # Product-Classification-for-EE5327701
 
+## 注意事項
+
+所有內容與操作皆在 `get-categories.ipynb` 中執行。
+
 ## 需求安裝
 
 首先，請安裝必要的套件，這些套件列在 `requirements.txt` 中。使用以下指令安裝所有必要的依賴：
@@ -42,7 +46,7 @@ results = get_category(categories, p_names, top_k=3)
 
 ## 儲存結果
 
-將分類結果保存為 CSV 檔案。文件會以學號(若有英文請以大寫為主)命名:
+將分類結果保存為 CSV 檔案。文件會以學號(若有英文請以大寫為主)命名：
 
 ```python
 df = pd.DataFrame(results)
