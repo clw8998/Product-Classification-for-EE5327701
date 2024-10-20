@@ -1,0 +1,8 @@
+transformers
+datasets
+pandas
+tqdm
+onnx
+optimum
+onnxruntime
+cmake

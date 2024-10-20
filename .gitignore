@@ -1,0 +1,7 @@
+/.ipynb_checkpoints
+/.idea
+/.vscode
+/trained_model
+/*.pkl/
+/save_model
+/data
