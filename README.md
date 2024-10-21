@@ -12,50 +12,92 @@
 pip install -r requirements.txt
 ```
 
+## 商品名稱分配表
+
+| ID       | Start | End | Count |
+|------------|----------------|--------------|-------|
+| M11115092  | 0              | 28570        | 28570 |
+| M11315070  | 28571          | 57141        | 28570 |
+| M11315090  | 57142          | 85712        | 28570 |
+| M11315102  | 85713          | 114283       | 28570 |
+| M11315104  | 114284         | 142854       | 28570 |
+| M11202145  | 142855         | 171425       | 28570 |
+| M11207510  | 171426         | 199996       | 28570 |
+| M11207511  | 199997         | 228567       | 28570 |
+| M11207522  | 228568         | 257138       | 28570 |
+| M11302154  | 257139         | 285709       | 28570 |
+| M11203437  | 285710         | 314280       | 28570 |
+| M11307002  | 314281         | 342851       | 28570 |
+| M11307310  | 342852         | 371422       | 28570 |
+| M11307322  | 371423         | 399993       | 28570 |
+| M11307510  | 399994         | 428564       | 28570 |
+| M11207315  | 428565         | 457135       | 28570 |
+| M11207319  | 457136         | 485706       | 28570 |
+| M11307319  | 485707         | 514277       | 28570 |
+| M11307425  | 514278         | 542848       | 28570 |
+| M11307514  | 542849         | 571419       | 28570 |
+| M11207310  | 571420         | 599990       | 28570 |
+| M11207424  | 599991         | 628561       | 28570 |
+| M11215093  | 628562         | 657132       | 28570 |
+| M11352032  | 657133         | 685703       | 28570 |
+| F11309002  | 685704         | 714274       | 28570 |
+| M11202222  | 714275         | 742845       | 28570 |
+| M11207408  | 742846         | 771416       | 28570 |
+| M11302124  | 771417         | 799987       | 28570 |
+| M11307123  | 799988         | 828558       | 28570 |
+| M11307132  | 828559         | 857129       | 28570 |
+| M11215004  | 857130         | 885700       | 28570 |
+| M11215006  | 885701         | 914271       | 28570 |
+| M11207301  | 914272         | 942842       | 28570 |
+| M11207814  | 942843         | 971413       | 28570 |
+| M11203419  | 971414         | 999999       | 28585 |
+
+
 ## 修改資料與來源
 
-根據需要，請修改程式中的資料集來源。預設會從 Hugging Face 資料集加載產品名稱。你可以將其改為使用自己的資料。
-
-**預設程式碼：**
+根據以上分配表，將以下程式中的 Start, End 替換成你被分配到的 Start, End，來取得需要處理的商品名稱:
 
 ```python
-p_names = load_dataset(p_name_dataset, split="train")['product_name']
-```
-
-**修改後的程式碼：**
-
-將上面的程式碼改成你自己的資料，具體可以是從文件或其他來源加載產品名稱。
-
-```python
-# 例如：從一個本地 CSV 檔案中加載產品名稱
-import pandas as pd
-p_names = pd.read_csv('你的資料集.csv')['product_name']
+p_names = p_names[Start: End]
 ```
 
 ## 執行程式並取得分類結果
 
-在程式中，將 `categories` 和 `p_names` 傳入 `get_category()` 函數以取得分類結果。具體的函數使用方法如下：
-
-```python
-categories = ['category1', 'category2', 'category3']  # 這裡是你的分類標籤
-# 將產品名稱和分類標籤傳入 get_category 函數，並可選擇 top_k 參數
-results = get_category(categories, p_names, top_k=3)
-```
+在程式中，將 `tokenizer`, `model`, `p_names`, `categories`, `top_k=top_k` 依序傳入 `get_category()` 函數以取得分類結果。具體的函數使用方法如下：
 
 你可以通過設定 `top_k` 來取得前 `n` 個最相關的類別。
 
+```python
+top_k = 3
+result = get_category(tokenizer, model, p_names, categories, top_k=top_k)
+```
+
 ## 儲存結果
 
-將分類結果保存為 CSV 檔案。文件會以學號(若有英文請以大寫為主)命名：
+將分類結果保存為 CSV 檔案。檔案以學號(若有英文請以大寫為主)命名：
 
 ```python
-df = pd.DataFrame(results)
-df.to_csv('你的學號_categories.csv', index=False, encoding='utf-8-sig')
+df_expanded.to_csv('你的學號_categories.csv', index=False, encoding='utf-8-sig')
+```
+
+## 分析結果
+
+將class_1分析結果保存為 PNG 檔案。檔案以學號(若有英文請以大寫為主)命名：
+
+```python
+class_1_distribution = df_expanded['class_1'].value_counts()
+
+plt.figure(figsize=(6, 6), dpi=300)
+plt.pie(class_1_distribution, labels=class_1_distribution.index, autopct='%1.1f%%', startangle=90, colors=plt.cm.Paired.colors)
+plt.title('class_1 distribution')
+plt.axis('equal')
+plt.savefig('你的學號_distribution.png', dpi=300) 
 ```
 
 ## 完整流程總結
 
-1. 安裝必要的套件：`pip install -r requirements.txt`
-2. 修改資料來源，將預設的 `p_names` 改為你的資料集。
-3. 使用 `get_category()` 函數進行分類，並設定 `top_k` 取得最相關的類別。
-4. 保存結果到名為 `你的學號_categories.csv` 的檔案中。
+1. 安裝必要的套件。
+2. 修改資料來源以取得分配範圍內的商品名稱。
+3. 使用 `get_category()` 進行分類，設置 `top_k`。
+4. 保存分類結果為 CSV 檔案。
+5. 分析 `class_1` 結果並保存分布圖為 PNG 檔案。

@@ -6,3 +6,4 @@ onnx
 optimum
 onnxruntime
 cmake
+matplotlib
